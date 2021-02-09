@@ -10,22 +10,12 @@ import java.util.stream.Stream;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
-import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService {
 
   private final Path root = Paths.get("uploads");
-
-  @Override
-  public void init() {
-    try {
-      Files.createDirectory(root);
-    } catch (IOException e) {
-      throw new RuntimeException("Could not initialize folder for upload!");
-    }
-  }
 
   @Override
   public void save(MultipartFile file) {
@@ -50,11 +40,6 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     } catch (MalformedURLException e) {
       throw new RuntimeException("Error: " + e.getMessage());
     }
-  }
-
-  @Override
-  public void deleteAll() {
-    FileSystemUtils.deleteRecursively(root.toFile());
   }
 
   @Override
