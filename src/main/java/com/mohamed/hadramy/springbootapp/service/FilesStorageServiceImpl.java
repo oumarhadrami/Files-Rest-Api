@@ -15,12 +15,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FilesStorageServiceImpl implements FilesStorageService {
 
-  private final Path root = Paths.get("uploads");
+  private final Path uploadsFolder = Paths.get("uploads");
 
   @Override
   public void save(MultipartFile file) {
     try {
-      Files.copy(file.getInputStream(), this.root.resolve(file.getOriginalFilename()));
+      Files.copy(file.getInputStream(), this.uploadsFolder.resolve(file.getOriginalFilename()));
     } catch (Exception e) {
       throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
     }
@@ -29,7 +29,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
   @Override
   public Resource load(String filename) {
     try {
-      Path file = root.resolve(filename);
+      Path file = uploadsFolder.resolve(filename);
       Resource resource = new UrlResource(file.toUri());
 
       if (resource.exists() || resource.isReadable()) {
@@ -45,7 +45,7 @@ public class FilesStorageServiceImpl implements FilesStorageService {
   @Override
   public Stream<Path> loadAll() {
     try {
-      return Files.walk(this.root, 1).filter(path -> !path.equals(this.root)).map(this.root::relativize);
+      return Files.walk(this.uploadsFolder, 1).filter(path -> !path.equals(this.uploadsFolder)).map(this.uploadsFolder::relativize);
     } catch (IOException e) {
       throw new RuntimeException("Could not load the files!");
     }
